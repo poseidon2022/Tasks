@@ -14,8 +14,8 @@ type LibraryManager interface {
 }
 
 type Library struct {
-	allBooks 	map[string]models.Book
-	allMembers 	map[string]models.Member
+	allBooks 	map[int]models.Book
+	allMembers 	map[int]models.Member
 }
 
 func AddBook(book models.Book) {

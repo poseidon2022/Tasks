@@ -63,3 +63,30 @@ func bookInput() {
 	}
 	services.AddBook(newBook)
 }
+
+func bookRemove() {
+
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter the ID of the book you want to remove: ")
+	book_id, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error while accepting the ID")
+		return
+	}
+
+	book_id = strings.TrimSpace(book_id)
+	book_id_num ,err := strconv.Atoi(book_id)
+	for err != nil {
+		fmt.Println("Please enter a valid id number.")
+		fmt.Print("Enter the ID of the book you want to remove: ")
+		book_id, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println("Error while accepting the ID")
+			return
+		}
+		book_id = strings.TrimSpace(book_id)
+		book_id_num, err = strconv.Atoi(book_id)
+	}
+
+	services.RemoveBook(book_id_num)
+}
