@@ -25,7 +25,7 @@ func menu() {
 
 func main() {
 	var Library = services.Library{
-		Books : make(map[int]models.Book),
+		Books : map[int]models.Book{},
 		Members: map[int]models.Member{
 			1 : {
 				ID: 1,
@@ -51,7 +51,7 @@ func main() {
 	}
 	menu()
 
-	fmt.Println("Enter the command you want to execute!")
+	fmt.Print("Enter the command you want to execute: ")
 	for {
 	    reader := bufio.NewReader(os.Stdin)
 	    userChoice, err := reader.ReadString('\n')
