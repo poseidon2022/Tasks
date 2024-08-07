@@ -6,7 +6,9 @@ This Library Management System is a command-line application built using the Go 
 
 The project is organized into the following packages:
 
-controllers: Contains functions for handling user commands.
+## controllers
+
+Contains functions for handling user commands.
 models: Defines the data structures used in the application.
 services: Implements the core logic for managing the library.
 
