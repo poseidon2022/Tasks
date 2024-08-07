@@ -1,0 +1,42 @@
+# A Simple Task Manager API With MongoDB
+
+* This is a simple task manager api to post, update, visualize and delete tasks. 
+* Update, delete and get tasks by ID
+* Errors are handled in avery intuitive way.
+
+## Folder Structure
+
+* **Controllers:** folder to contain all the functions that invoke the task_services function up on an API call.
+* **Data:** contains and implements task_Service functions to handle anything related to the database storage, such as manipulating it or reading from it. It also includes the initialization for the mongoDB client and all collections are accessed only by functions that are inside the task_services.go file.
+
+**The code for the database client establishment**
+```go
+func GetClient() *mongo.Database {
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+	if err != nil {
+		log.Fatal("Error while connecting to the Database")
+	}
+
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		log.Fatal("Database connecction fatally failed")
+	}
+
+	db := client.Database("task_management")
+	fmt.Println("Database connection setup")
+	return db
+}
+
+var collection = GetClient().Collection("tasks")
+```
+
+* **Docs:** Description about the application and api documentation.
+* **Models:** Struct description for how the stored fields should look like.
+* **Router:** All the routes to handle api calls and invocations.
+* **main.go:** Entry point of our application.
+
+### Check out the API documentation using this URL
+
+https://documenter.getpostman.com/view/34371403/2sA3rzJsV1
