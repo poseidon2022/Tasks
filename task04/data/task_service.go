@@ -12,7 +12,7 @@ func SearchByID(id string) (task.Task, error) {
 			return value, nil
 		}
 	}
-	return task.Task{}, errors.New("task not focund") 
+	return task.Task{}, errors.New("task not found") 
 }
 
 func DeleteByID(id string) (error) {
