@@ -12,7 +12,11 @@ import (
 
 func AllTasks() gin.HandlerFunc {
 	return func (c *gin.Context) {
-		allTasks := data.FindAllTasks()	
+		allTasks, err := data.FindAllTasks()
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error" : "error while fetching data"})
+			return
+		}
 		c.IndentedJSON(http.StatusOK, allTasks)
 	}
 }

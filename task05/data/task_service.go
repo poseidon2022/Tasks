@@ -31,11 +31,11 @@ func GetClient() *mongo.Database {
 
 var collection = GetClient().Collection("tasks")
 
-func FindAllTasks() []*task.Task {
+func FindAllTasks() ([]*task.Task, error) {
 	var tasks []*task.Task
 	cur, err := collection.Find(context.TODO(), bson.D{{}})
 	if err != nil {
-		log.Fatal("Error while fetching tasks")
+		return tasks, errors.New("error while fetching data")
 	}
 
 	for cur.Next(context.TODO()) {
@@ -43,19 +43,19 @@ func FindAllTasks() []*task.Task {
 
 		err := cur.Decode(&elem)
 		if err != nil {
-			log.Fatal("error while fetching a task")
+			return tasks, errors.New("error while fetching data")
 		}
 		tasks = append(tasks, &elem)
 	}
 
 	err = cur.Err()
 	if err != nil {
-		log.Fatal("Database cursor error")
+		return tasks, errors.New("error while fetching data")
 	}
 
 	cur.Close(context.TODO())
 
-	return tasks
+	return tasks, nil
 }
 
 func AddTask(newTask task.Task) error {
