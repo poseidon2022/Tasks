@@ -32,6 +32,8 @@ func GetClient() *mongo.Database {
 var collection = GetClient().Collection("tasks")
 ```
 
+* The connection string inside the ApplyURI can be modified to another connection string to access and use another cluster.
+
 * **Docs:** Description about the application and api documentation.
 * **Models:** Struct description for how the stored fields should look like.
 * **Router:** All the routes to handle api calls and invocations.
