@@ -2,9 +2,9 @@ package data
 
 import (
 	"context"
+	"time"
 	"os"
 	"errors"
-	"time"
 	"log"
 	models "task06/models"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -39,7 +39,15 @@ var userCollection = GetClient().Collection("users")
 
 func RegisterUser(newUser models.User) error {
 
-	unhashedPwd := newUser.Password 
+	unhashedPwd := newUser.Password
+	email := newUser.Email
+
+	var existingUser models.User
+	_ = userCollection.FindOne(context.TODO(), bson.D{{Key:"email", Value:email}}).Decode(&existingUser)
+	if existingUser.ID != "" {
+		return errors.New("user email already in use")
+	}
+
 	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(unhashedPwd), bcrypt.DefaultCost)
 	if err != nil {
 		return errors.New("error while hashing the password")
@@ -72,12 +80,12 @@ func AuthenticateUser(userInfo models.User) (string, error) {
 		return "", errors.New("invalid credentials")
 	}
 
-
 	var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id" : user.ID,
-		"user_email": user.Email,
-		"exp" : time.Now().Add(time.Hour*24),
+		"email": user.Email,
+		"role" : user.Role,
+		"exp" : time.Now().Add(time.Hour * 72).Unix(),
 	})
 
 	jwtToken, err := token.SignedString(jwtSecret)
@@ -87,7 +95,13 @@ func AuthenticateUser(userInfo models.User) (string, error) {
 	}
 
 	return jwtToken, nil
+}
 
+func VerifyFirst() bool {
+	cur, err := userCollection.Find(context.TODO(), bson.D{{}})
+	if err != nil {return false}
+	if cur.Next(context.TODO()) {return false}
+	return true
 }
 
 func FindAllTasks() ([]*models.Task, error) {

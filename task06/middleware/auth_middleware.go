@@ -3,6 +3,8 @@ package middleware
 import (
 
 	"errors"
+	"fmt"
+	models "task06/models"
 	"os"
 	"net/http"
 	"strings"
@@ -40,9 +42,47 @@ func UserAuth() gin.HandlerFunc {
 			c.Abort()
 			return 
 		}
+
+		claims, ok := token.Claims.(jwt.MapClaims)
+		fmt.Println(claims)
+
+		if !ok {
+			c.IndentedJSON(http.StatusForbidden, gin.H{"error":"error while extracting claims"})
+			c.Abort()
+			return
+		}
+
+		user_id, ok := claims["user_id"].(string)
+
+		if !ok {
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "user_id not found in the token"})
+			c.Abort()
+			return 
+		}
+
+		email, ok := claims["email"].(string)
+
+		if !ok {
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "user_id not found in the token"})
+			c.Abort()
+			return 
+		}
 		
+
+		role, ok := claims["role"].(string)
+		if !ok {
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "user_id not found in the token"})
+			c.Abort()
+			return 
+		}
+		
+		c.Set("AuthorizedUser", &models.AuthenticatedUser{
+			ID : user_id,
+			Role : role,
+			Email : email,
+		})
+
 		c.Next()
-		c.Abort()
 	}
 }
 

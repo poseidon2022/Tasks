@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"fmt"
 	data "task06/data"
 	models "task06/models"
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,7 @@ func LogIn() gin.HandlerFunc {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "invalid format"})
 			return
 		}
-
+		
 		token, err := data.AuthenticateUser(userInfo)
 		if err != nil {
 			c.IndentedJSON(http.StatusNotFound, gin.H{"error":"Invalid Credentials"})
@@ -34,6 +35,11 @@ func SignUp() gin.HandlerFunc {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error":"invalid user format"})
 			return
 		}
+		
+		firstUser := data.VerifyFirst()
+		if firstUser {
+			newUser.Role = "admin"
+		} else {newUser.Role = "user"}
 
 		err := data.RegisterUser(newUser)
 		if err != nil {
@@ -74,6 +80,18 @@ func SpecTask() gin.HandlerFunc {
 func UpdateTask() gin.HandlerFunc {
 
 	return func (c *gin.Context) {
+		AuthUser, ok := c.Get("AuthorizedUser")
+		if !ok {
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error":"Authorization error"})
+			return
+		}
+
+		AuthorizedUser := AuthUser.(*models.AuthenticatedUser)
+
+		if AuthorizedUser.Role != "admin" {
+			c.IndentedJSON(http.StatusForbidden, gin.H{"error":"You are not authorized to update a task"})
+			return
+		}
 		task_id := c.Param("id")
 		var modifiedTask models.Task 
 		if err := c.BindJSON(&modifiedTask); err != nil {
@@ -94,6 +112,20 @@ func UpdateTask() gin.HandlerFunc {
 
 func DeleteTask() gin.HandlerFunc {
 	return func (c *gin.Context) {
+		AuthUser, ok := c.Get("AuthorizedUser")
+		if !ok {
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error":"Authorization error"})
+			return
+		}
+
+		AuthorizedUser := AuthUser.(*models.AuthenticatedUser)
+		
+		fmt.Println(AuthorizedUser)
+		if AuthorizedUser.Role != "admin" {
+			c.IndentedJSON(http.StatusForbidden, gin.H{"error":"You are not authorized to delete a task"})
+			return
+		}
+	
 		task_id := c.Param("id")
 		err := data.DeleteByID(task_id)
 		if err != nil {
@@ -108,6 +140,19 @@ func DeleteTask() gin.HandlerFunc {
 
 func PostTask() gin.HandlerFunc {
 	return func (c *gin.Context) {
+
+		AuthUser, ok := c.Get("AuthorizedUser")
+		if !ok {
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error":"Authorization error"})
+			return
+		}
+
+		AuthorizedUser := AuthUser.(*models.AuthenticatedUser)
+
+		if AuthorizedUser.Role != "admin" {
+			c.IndentedJSON(http.StatusForbidden, gin.H{"error":"You are not authorized to post a task"})
+			return
+		}
 		var newTask models.Task
 		if err := c.BindJSON(&newTask); err != nil {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{"error":"Invalid request format"})
