@@ -26,7 +26,6 @@ func LogIn() gin.HandlerFunc {
 	}
 }
 
-
 func SignUp() gin.HandlerFunc {
 	return func (c *gin.Context) {
 		var newUser models.User
@@ -51,7 +50,31 @@ func SignUp() gin.HandlerFunc {
 	}
 }
 
+func PromoteUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		AuthUser, ok := c.Get("AuthorizedUser")
+		if !ok {
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error":"Authorization error"})
+			return
+		}
 
+		AuthorizedUser := AuthUser.(*models.AuthenticatedUser)
+
+		if AuthorizedUser.Role != "admin" {
+			c.IndentedJSON(http.StatusForbidden, gin.H{"error":"You are not authorized to promote anotehr user"})
+			return
+		}
+
+		user_id := c.Param("id")
+		statusUpdated := data.UpdateStatus(user_id)
+		if !statusUpdated {
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error":"user with the specified ID not found"})
+			return 
+		}
+
+		c.IndentedJSON(http.StatusOK, gin.H{"message": "previlege updated to admin for the specified user"})
+	}
+}
 
 func AllTasks() gin.HandlerFunc {
 	return func (c *gin.Context) {

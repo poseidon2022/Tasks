@@ -14,4 +14,5 @@ func TaskHandler (internalRouter *gin.Engine) {
 	internalRouter.POST("/tasks", middleware.UserAuth(), controllers.PostTask())
 	internalRouter.POST("/register", controllers.SignUp())
 	internalRouter.POST("/login", controllers.LogIn())
+	internalRouter.PUT("/promote/:id", middleware.UserAuth(), controllers.PromoteUser())
 }

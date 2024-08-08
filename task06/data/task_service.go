@@ -2,17 +2,18 @@ package data
 
 import (
 	"context"
-	"time"
-	"os"
 	"errors"
+	"fmt"
 	"log"
+	"os"
 	models "task06/models"
-	"go.mongodb.org/mongo-driver/mongo"
+	"time"
+
+	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/crypto/bcrypt"
-	"github.com/dgrijalva/jwt-go"
-	"fmt"
 )
 
 func GetClient() *mongo.Database {
@@ -104,6 +105,15 @@ func VerifyFirst() bool {
 	return true
 }
 
+func UpdateStatus(id string) bool {
+	filter := bson.D{{Key : "id", Value : id}}
+
+	_, err := userCollection.UpdateOne(context.TODO(), filter, bson.D{{Key : "$set", Value : 
+	bson.D{{Key : "role", Value : "admin"}}}})
+
+	fmt.Println(err)
+	return err == nil
+}
 func FindAllTasks() ([]*models.Task, error) {
 	var tasks []*models.Task
 	cur, err := taskCollection.Find(context.TODO(), bson.D{{}})
