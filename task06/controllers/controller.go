@@ -41,8 +41,15 @@ func SignUp() gin.HandlerFunc {
 		} else {newUser.Role = "user"}
 
 		err := data.RegisterUser(newUser)
-		if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error":"Internal server error"})
+
+		if err.Error() == "neccesary fields are missing" {
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"error" : err.Error()})
+			return
+		} else if err.Error() == "user email already in use" {
+			c.IndentedJSON(http.StatusBadRequest, gin.H{"error" : err.Error()})
+			return
+		} else if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error" : err.Error()})
 			return
 		}
 
@@ -61,7 +68,7 @@ func PromoteUser() gin.HandlerFunc {
 		AuthorizedUser := AuthUser.(*models.AuthenticatedUser)
 
 		if AuthorizedUser.Role != "admin" {
-			c.IndentedJSON(http.StatusForbidden, gin.H{"error":"You are not authorized to promote anotehr user"})
+			c.IndentedJSON(http.StatusForbidden, gin.H{"error":"You are not authorized to promote another user"})
 			return
 		}
 

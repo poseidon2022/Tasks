@@ -43,6 +43,10 @@ func RegisterUser(newUser models.User) error {
 	unhashedPwd := newUser.Password
 	email := newUser.Email
 
+	if email == "" || unhashedPwd == "" || newUser.ID == "" {
+		return errors.New("neccesary fields are missing")
+	}
+
 	var existingUser models.User
 	_ = userCollection.FindOne(context.TODO(), bson.D{{Key:"email", Value:email}}).Decode(&existingUser)
 	if existingUser.ID != "" {
