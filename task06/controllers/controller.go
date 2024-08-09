@@ -41,17 +41,19 @@ func SignUp() gin.HandlerFunc {
 		} else {newUser.Role = "user"}
 
 		err := data.RegisterUser(newUser)
-
-		if err.Error() == "neccesary fields are missing" {
-			c.IndentedJSON(http.StatusBadRequest, gin.H{"error" : err.Error()})
-			return
-		} else if err.Error() == "user email already in use" {
-			c.IndentedJSON(http.StatusBadRequest, gin.H{"error" : err.Error()})
-			return
-		} else if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, gin.H{"error" : err.Error()})
-			return
-		}
+		
+		if err != nil {
+			if err.Error() == "neccesary fields are missing" {
+				c.IndentedJSON(http.StatusBadRequest, gin.H{"error" : err.Error()})
+				return
+			} else if err.Error() == "user email already in use" {
+				c.IndentedJSON(http.StatusBadRequest, gin.H{"error" : err.Error()})
+				return
+			} else {
+				c.IndentedJSON(http.StatusInternalServerError, gin.H{"error" : err.Error()})
+				return
+			}
+		} 
 
 		c.IndentedJSON(http.StatusOK, gin.H{"message":"user registered successfully"})
 	}
