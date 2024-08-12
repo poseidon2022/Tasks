@@ -3,7 +3,6 @@ package middleware
 import (
 
 	"errors"
-	"fmt"
 	models "task06/models"
 	"os"
 	"net/http"
@@ -44,7 +43,6 @@ func UserAuth() gin.HandlerFunc {
 		}
 
 		claims, ok := token.Claims.(jwt.MapClaims)
-		fmt.Println(claims)
 
 		if !ok {
 			c.IndentedJSON(http.StatusForbidden, gin.H{"error":"error while extracting claims"})
@@ -63,7 +61,7 @@ func UserAuth() gin.HandlerFunc {
 		email, ok := claims["email"].(string)
 
 		if !ok {
-			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "user_id not found in the token"})
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "email not found in the token"})
 			c.Abort()
 			return 
 		}
@@ -71,7 +69,7 @@ func UserAuth() gin.HandlerFunc {
 
 		role, ok := claims["role"].(string)
 		if !ok {
-			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "user_id not found in the token"})
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "role not found in the token"})
 			c.Abort()
 			return 
 		}

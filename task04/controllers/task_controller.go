@@ -78,5 +78,6 @@ func PostTask() gin.HandlerFunc {
 		}
 
 		c.IndentedJSON(http.StatusOK,gin.H{"message":"Task added successfully"})
+		
 	}
 }

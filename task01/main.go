@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 )
-
 func gradeCalculator(subjects map[string]float64) float64 {
 	var _sum float64
 	for _, value := range subjects {

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"fmt"
 	data "task06/data"
 	models "task06/models"
 	"github.com/gin-gonic/gin"
@@ -152,7 +151,6 @@ func DeleteTask() gin.HandlerFunc {
 
 		AuthorizedUser := AuthUser.(*models.AuthenticatedUser)
 		
-		fmt.Println(AuthorizedUser)
 		if AuthorizedUser.Role != "admin" {
 			c.IndentedJSON(http.StatusForbidden, gin.H{"error":"You are not authorized to delete a task"})
 			return
