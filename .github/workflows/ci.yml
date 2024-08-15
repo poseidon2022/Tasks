@@ -28,7 +28,7 @@ jobs:
       working-directory: golang-clean-architecture
       
     - name: Usecase Test
-      run: go test ./usecases_test -v -coverprofile=coverage_usecases.out -covermode=atomic
+      run: go test ./usecase_test -v -coverprofile=coverage_usecases.out -covermode=atomic
       working-directory: golang-clean-architecture
 
     - name: Controller Test
