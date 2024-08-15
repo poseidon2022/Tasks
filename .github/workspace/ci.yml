@@ -1,0 +1,36 @@
+
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22'
+
+    - name: Install dependencies
+      run: go mod download
+      working-directory: golang-clean-architecture
+
+    - name: Tidy-up modules
+      run: go mod tidy
+      working-directory: golang-clean-architecture
+      
+    - name: Usecase Test
+      run: go test ./usecases_test -v -coverprofile=coverage_usecases.out -covermode=atomic
+      working-directory: golang-clean-architecture
+
+    - name: Controller Test
+      run: go test ./controller_test -v -coverprofile=coverage_controller.out -covermode=atomic
+      working-directory: golang-clean-architecture
