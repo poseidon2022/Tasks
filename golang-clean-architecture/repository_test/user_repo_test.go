@@ -54,11 +54,11 @@ func (suite *APITestSuite) TearDownSuite() {
     }
 }
 
-func (suite *APITestSuite) TestInsertUser() {
+func (suite *APITestSuite) TestRegisterSuccess() {
 	user := &domain.User{
 		ID: primitive.NewObjectID(),
 		Email: "kidusm3l@gmail.com",
-		Password: "123456789",
+		Password: "123456789hbihbi",
 		Role : "admin",
 	}
 
@@ -83,7 +83,6 @@ func (suite *APITestSuite) TestSignUp_DupEmail() {
 
 	err := suite.repo.Register(user)
 	suite.NoError(err, "no error when registering user")
-	user.Password = "642875"
 	err = suite.repo.UserExists(user)
 	suite.Error(err, "error user email already exists")
 }

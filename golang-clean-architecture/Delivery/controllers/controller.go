@@ -71,7 +71,9 @@ func (uc *UserController) PromoteUser() gin.HandlerFunc {
 
 		userID := c.Param("id")
 		err := uc.UserUseCase.PromoteUser(userID)
+
 		if err != nil {
+
 			if err.Error() == "invalid user ID" {
 				c.IndentedJSON(http.StatusBadRequest, gin.H{"error" : err.Error()})
 				return 
