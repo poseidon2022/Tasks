@@ -55,6 +55,20 @@ func (uc *UserController) Login() gin.HandlerFunc {
 
 func (uc *UserController) PromoteUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		AuthUser, ok := c.Get("AuthorizedUser")
+		if !ok {
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error":"Authorization error"})
+			return
+		}
+
+		AuthorizedUser := AuthUser.(*domain.AuthenticatedUser)
+
+		if AuthorizedUser.Role != "admin" {
+			c.IndentedJSON(http.StatusForbidden, gin.H{"error":"You are not authorized to promote another user"})
+			return
+		}
+
 		userID := c.Param("id")
 		err := uc.UserUseCase.PromoteUser(userID)
 		if err != nil {

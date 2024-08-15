@@ -35,7 +35,7 @@ func (tu *TaskUseCase) PostTask(task domain.Task) error {
 	if task.Description == "" || task.Status == "" || task.Title == "" {
 		return errors.New("required fields are missing")
 	}
-	err := tu.Repository.PostTask(task)
+	err := tu.Repository.PostTask(&task)
 	return err
 }
 

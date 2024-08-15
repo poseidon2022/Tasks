@@ -71,7 +71,7 @@ func (tr *TaskRepository) GetTask(taskID string) (domain.Task, error) {
 	return task, nil
 }
 
-func (tr *TaskRepository) PostTask(task domain.Task) error {
+func (tr *TaskRepository) PostTask(task *domain.Task) error {
 	collection := tr.Database.Collection(tr.Collection)
 	task.ID = primitive.NewObjectID()
 	_, err := collection.InsertOne(context.TODO(), task)

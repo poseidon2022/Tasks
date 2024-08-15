@@ -28,7 +28,7 @@ type AuthenticatedUser struct {
 type TaskRepository interface {
 	GetTasks()							([]*Task, error)
 	GetTask(string)						(Task, error)
-	PostTask(Task)						error
+	PostTask(*Task)						error
 	DeleteTask(string)					error
 	UpdateTask(string, *Task)			error
 }
