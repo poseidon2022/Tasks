@@ -65,6 +65,7 @@ func (suite *ControllerTestSuite) SetupTest() {
 	suite.router.POST("/tasks", infrastructure.AuthMiddleWare(), suite.taskController.PostTask())
 	suite.router.DELETE("/tasks/:id", infrastructure.AuthMiddleWare(), suite.taskController.DeleteTask())
 	suite.router.PUT("/tasks/:id", infrastructure.AuthMiddleWare(), suite.taskController.UpdateTask())
+	suite.router.GET("/tasks/:id", infrastructure.AuthMiddleWare(), suite.taskController.GetTask())
 }
 
 
@@ -483,6 +484,44 @@ func (suite *ControllerTestSuite) TestUpdateTaskSuccess() {
 
     suite.mockTaskUseCase.AssertCalled(suite.T(), "UpdateTask", "12345", &task)
 }
+
+func (suite *ControllerTestSuite) TestGetTaskByIDSuccess() {
+    // Create a new HTTP GET request to the /tasks endpoint without a request body
+    returnedTask := suite.SingleTask
+    req, err := http.NewRequest(http.MethodGet, "/tasks/12345", nil)
+    suite.NoError(err)
+
+    // Generate a token for the user
+    token, err := suite.GenerateToken("kidusm3l@gmail.com", "user")
+    suite.NoError(err)
+
+    // Mock the GetTasks method to return the expected tasks
+    suite.mockTaskUseCase.On("GetTask", "12345").Return(returnedTask, nil)
+
+    // Set the Content-Type and Authorization headers
+    req.Header.Set("Content-Type", "application/json")
+    req.Header.Set("Authorization", "Bearer " + token)
+
+    // Create a new HTTP test recorder
+    recorder := httptest.NewRecorder()
+    suite.router.ServeHTTP(recorder, req)
+
+    // Assert that the response status code is http.StatusOK
+    suite.Equal(http.StatusOK, recorder.Code)
+
+    // Unmarshal the response body to a slice of domain.Task
+    var responseBody domain.Task
+    err = json.Unmarshal(recorder.Body.Bytes(), &responseBody)
+    suite.NoError(err)
+
+    // Assert that the response body contains the expected tasks
+    suite.Equal(returnedTask.Title, responseBody.Title)
+	suite.Equal(returnedTask.Status, responseBody.Status)
+
+    // Assert that the GetTasks method was called
+    suite.mockTaskUseCase.AssertCalled(suite.T(), "GetTask", "12345")
+}
+
 
 func TestControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(ControllerTestSuite))
