@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"golang-clean-architecture/Delivery/controllers"
+	"golang-clean-architecture/delivery/controllers"
 	"golang-clean-architecture/domain"
 	"golang-clean-architecture/domain/mocks"
 	"golang-clean-architecture/infrastructure"

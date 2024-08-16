@@ -31,6 +31,7 @@ func (suite *PasswordTestSuite) TestHashPasswordFailure() {
 }
 
 
+
 func (suite *PasswordTestSuite) TestComparePasswordsSuccess() {
 	password := "securepassword"
 
