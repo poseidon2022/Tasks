@@ -32,7 +32,7 @@ jobs:
       working-directory: golang-clean-architecture
 
     - name: Infrastructure Test
-      run: go test ./infrastructure -v -coverprofile=coverage_usecases.out -covermode=atomic
+      run: go test ./infrastructure -v -coverprofile=coverage_infrastructure.out -covermode=atomic
       working-directory: golang-clean-architecture
 
     - name: Controller Test
